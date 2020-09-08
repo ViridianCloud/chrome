@@ -1,6 +1,6 @@
 headless-chrome is a self-hosted web-service that allows for remote clients to connect, drive, and execute headless work; all inside of docker. It offers first-class integrations for puppeteer, playwright, selenium's webdriver, and a slew of handy REST APIs for doing more common work. On top of all that it takes care of other common issues such as missing system-fonts, missing external libraries, and performance improvements. We even handle edge-cases like downloading files, managing sessions, and have a fully-fledged documentation site.
 
-If you've been struggling to get Chrome up and running docker, or scaling out your headless workloads, then browserless was built for you.
+If you've been struggling to get Chrome up and running docker, or scaling out your headless workloads, then headless-chrome was built for you.
 # Table of Contents
 
 1. [Features](#features)
@@ -28,7 +28,7 @@ If you've been struggling to get Chrome up and running docker, or scaling out yo
 
 # How it works
 
-headless-chrome listens for both incoming websocket requests, generally issued by most libraries, as well as pre-build REST APIs to do common functions (PDF generation, images and so on). When a websocket connects to browserless it invokes Chrome and proxies your request into it. Once the session is done then it closes and awaits for more connections. Some libraries use Chrome's HTTP endpoints, like `/json` to inspect debug-able targets, which browserless also supports.
+headless-chrome listens for both incoming websocket requests, generally issued by most libraries, as well as pre-build REST APIs to do common functions (PDF generation, images and so on). When a websocket connects to headless-chrome it invokes Chrome and proxies your request into it. Once the session is done then it closes and awaits for more connections. Some libraries use Chrome's HTTP endpoints, like `/json` to inspect debug-able targets, which headless-chrome also supports.
 
 Your application still runs the script itself (much like a database interaction), which gives you total control over what library you want to choose and when to do upgrades. This is preferable over other solutions as Chrome is still breaking their debugging protocol quite frequently.
 
