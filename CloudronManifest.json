@@ -1,9 +1,26 @@
 {
-  "version": "0.1.0",
-  "healthCheckPath": "/",
+  "id": "com.headless-chome",
+  "title": "Headless Chrome",
+  "author": "bwless authors",
+  "description": "file://DESCRIPTION.md",
+  "changelog": "file://CHANGELOG",
+  "tagline": "Best way to set up user tests and browser automations",
+  "version": "0.0.2",
+  "healthCheckPath": "/status",
   "httpPort": 3000,
   "addons": {
-    "localstorage": {}
+    "localstorage": {},
+    "postgresql": {},
+    "ldap": {}
   },
-  "manifestVersion": 2
+  "manifestVersion": 1,
+  "website": "https://viridiancloud.com",
+  "contactEmail": "accounts@viridiancloud.com",
+  "icon": "logo.png",
+  "tags": [
+    "chrome",
+    "testing",
+    "browser",
+    "automation"
+  ]
 }
