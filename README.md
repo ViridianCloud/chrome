@@ -1,9 +1,4 @@
-![browserless splash logo](https://raw.githubusercontent.com/browserless/chrome/master/assets/splash.png)
-
-[![Build Status](https://travis-ci.org/browserless/chrome.svg?branch=master)](https://travis-ci.org/browserless/chrome)
-![Dependabot](https://flat.badgen.net/badge/-/dependabot?icon=dependabot&label&color=green)
-
-browserless is a web-service that allows for remote clients to connect, drive, and execute headless work; all inside of docker. It offers first-class integrations for puppeteer, playwright, selenium's webdriver, and a slew of handy REST APIs for doing more common work. On top of all that it takes care of other common issues such as missing system-fonts, missing external libraries, and performance improvements. We even handle edge-cases like downloading files, managing sessions, and have a fully-fledged documentation site.
+headless-chrome is a self-hosted web-service that allows for remote clients to connect, drive, and execute headless work; all inside of docker. It offers first-class integrations for puppeteer, playwright, selenium's webdriver, and a slew of handy REST APIs for doing more common work. On top of all that it takes care of other common issues such as missing system-fonts, missing external libraries, and performance improvements. We even handle edge-cases like downloading files, managing sessions, and have a fully-fledged documentation site.
 
 If you've been struggling to get Chrome up and running docker, or scaling out your headless workloads, then browserless was built for you.
 # Table of Contents
@@ -17,18 +12,10 @@ If you've been struggling to get Chrome up and running docker, or scaling out yo
 7. [Using with puppeteer](#puppeteer)
 8. [Using with selenium](#webdriver)
 9. [Using with playwright](#playwright)
-10. [Licensing](#licensing)
-12. [Changelog](https://github.com/browserless/chrome/blob/master/CHANGELOG.md)
-
-## External links
-
-1. [Full documentation site](https://docs.browserless.io/)
-2. [Live Debugger (using browserless.io)](https://chrome.browserless.io/)
-3. [Docker](https://hub.docker.com/r/browserless/chrome/)
-4. [Slack](https://join.slack.com/t/browserless/shared_invite/enQtMzA3OTMwNjA3MzY1LTRmMWU5NjQ0MTQ2YTE2YmU3MzdjNmVlMmU4MThjM2UxODNmNzNlZjVkY2U2NjdkMzYyNTgyZTBiMmE3Nzg0MzY)
 
 # Features
 
+- One-click installation into your Cloudron platform
 - Parallelism and queueing are built-in and configurable.
 - Fonts and emoji's working out-of-the-box.
 - Debug Viewer for actively viewing/debugging running sessions.
@@ -41,23 +28,20 @@ If you've been struggling to get Chrome up and running docker, or scaling out yo
 
 # How it works
 
-browserless listens for both incoming websocket requests, generally issued by most libraries, as well as pre-build REST APIs to do common functions (PDF generation, images and so on). When a websocket connects to browserless it invokes Chrome and proxies your request into it. Once the session is done then it closes and awaits for more connections. Some libraries use Chrome's HTTP endpoints, like `/json` to inspect debug-able targets, which browserless also supports.
+headless-chrome listens for both incoming websocket requests, generally issued by most libraries, as well as pre-build REST APIs to do common functions (PDF generation, images and so on). When a websocket connects to browserless it invokes Chrome and proxies your request into it. Once the session is done then it closes and awaits for more connections. Some libraries use Chrome's HTTP endpoints, like `/json` to inspect debug-able targets, which browserless also supports.
 
 Your application still runs the script itself (much like a database interaction), which gives you total control over what library you want to choose and when to do upgrades. This is preferable over other solutions as Chrome is still breaking their debugging protocol quite frequently.
 
 # Docker
 
-> See more options on our [full documentation site](https://docs.browserless.io/docs/docker.html).
-
-1. `docker run -p 3000:3000 browserless/chrome`
+1. `docker run -p 3000:3000 viridiancloud/chrome`
 2. Visit `http://localhost:3000/` to use the interactive debugger.
-3. See more at our [docker repository](https://hub.docker.com/r/browserless/chrome/).
 
 # Live Debugger
 
 ![Browserless Debugger](https://raw.githubusercontent.com/browserless/chrome/master/assets/demo.gif)
 
-browserless comes with _two_ methods of debugging. The first is a web-based debugger for trying out small chunks of code without setting up a new project. You can see our public-facing [debugger here](https://chrome.browserless.io/).
+headless-chrome comes with _two_ methods of debugging. The first is a web-based debugger for trying out small chunks of code without setting up a new project. You can see our public-facing [debugger here](https://chrome.browserless.io/).
 
 The second method is an active-session debugger. When browserless runs http requests, and puppeteer sessions, it keeps track of some browser state, and makes those sessions available for debugging. You can simply load the web-based debugger in the browser, and click the menu icon in the top-left. It'll reveal all currently running sessions and a link to "view" them in Chrome's remote devtools. You can also query the `/session` API to get a JSON representation of sessions as well.
 
@@ -84,16 +68,6 @@ location / {
     proxy_cache_bypass $http_upgrade;
   }
 ```
-
-# Hosting Providers
-
-We offer a first-class hosted product located [here](https://browserless.io). Alternatively you can host this image on just about any major platform that offers hosting for docker. The hosted service takes care of all the machine provisioning, notifications, dashboards and monitoring plus more:
-
-- Easily upgrade and toggle between versions at the press of a button. No managing repositories and other code artifacts.
-- Never need to update or pull anything from docker. There's literally zero software to install to get started.
-- Scale your consumption up or down with different plans. We support up to thousands of concurrent sessions at a given time.
-
-If you're interested in using this image for commercial aspects, then please read the below section on licensing.
 
 # Puppeteer
 
@@ -176,9 +150,7 @@ After that, the rest of your code remains the same with no other changes require
 
 # Usage with other libraries
 
-Most libraries allow you to specify a remote instance of Chrome to interact with. They are either looking for a websocket endpoint, a host and port, or some address. Browserless supports these by default, however if you're having issues please make an issue in this project and we'll try and work with the library authors to get them integrated with browserless.
-
-You can find a much larger list of supported libraries [on our documentation site](https://docs.browserless.io/docs/puppeteer-library.html).
+Most libraries allow you to specify a remote instance of Chrome to interact with. They are either looking for a websocket endpoint, a host and port, or some address. headless-chrome supports these by default, however if you're having issues please make an issue in this project and we'll try and work with the library authors to get them integrated with headless-chrome.
 
 # Motivations
 
@@ -190,12 +162,4 @@ All of these issues prompted me to build a first-class image and workflow for in
 
 # Licensing
 
-If you want to use browserless to build commercial sites, applications, or in a continuous-integration system that's closed-source then you'll need to purchase a commercial license. This allows you to keep your software proprietary whilst still using browserless. [You can purchase a commercial license here](https://www.browserless.io/sign-up?type=commercial). A commercial license grants you:
-
-- Priority support on issues and features.
-- On-premise running as well as running on public cloud providers for commercial/CI purposes for proprietary systems.
-- Ability to modify the source (forking) for your own purposes.
-
-Not only does it grant you a license to run such a critical piece of infrastructure, but you are also supporting further innovation in this space and our ability to contribute to it!
-
-If you are creating an open source application under a license compatible with the GNU GPL license v3, you may use browserless under the terms of the GPLv3. You can read more about this license [here](https://www.gnu.org/licenses/quick-guide-gplv3.en.html).
+License compatible with the GNU GPL license v3, you may use headless-chrome under the terms of the GPLv3. You can read more about this license [here](https://www.gnu.org/licenses/quick-guide-gplv3.en.html).
