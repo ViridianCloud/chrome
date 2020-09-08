@@ -8,14 +8,13 @@ If you've been struggling to get Chrome up and running docker, or scaling out yo
 3. [Docker](#docker)
 4. [Using the debuggers](#live-debugger)
 5. [Recommended NGINX Config](#Recommended-NGINX-Config)
-6. [Hosting](#hosting-providers)
-7. [Using with puppeteer](#puppeteer)
-8. [Using with selenium](#webdriver)
-9. [Using with playwright](#playwright)
+6. [Using with puppeteer](#puppeteer)
+7. [Using with selenium](#webdriver)
+8. [Using with playwright](#playwright)
 
 # Features
 
-- One-click installation into your Cloudron platform
+- One-click installation into your Cloudron platform.
 - Parallelism and queueing are built-in and configurable.
 - Fonts and emoji's working out-of-the-box.
 - Debug Viewer for actively viewing/debugging running sessions.
