@@ -65,6 +65,15 @@ const parseNumber = (param: string | undefined, defaultParam: number): number =>
   return parsed;
 };
 
+const parseSocketBehavior = (behavior: string = 'http'): 'http' | 'close' => {
+  if (behavior !== 'http' && behavior !== 'close') {
+    console.warn(`Unknown socket behavior of "${behavior}" passed in, using "http"`)
+    return 'http';
+  }
+
+  return behavior;
+}
+
 const thirtyMinutes = 30 * 60 * 1000;
 const expandedDir = untildify(process.env.WORKSPACE_DIR || '');
 
@@ -82,6 +91,7 @@ export const DEFAULT_HEADLESS: boolean = parseJSONParam(process.env.DEFAULT_HEAD
 export const DEFAULT_LAUNCH_ARGS: string[] = parseJSONParam(process.env.DEFAULT_LAUNCH_ARGS, []);
 export const DEFAULT_IGNORE_DEFAULT_ARGS: boolean = parseJSONParam(process.env.DEFAULT_IGNORE_DEFAULT_ARGS, false);
 export const DEFAULT_IGNORE_HTTPS_ERRORS: boolean = parseJSONParam(process.env.DEFAULT_IGNORE_HTTPS_ERRORS, false);
+export const DEFAULT_DUMPIO: boolean = parseJSONParam(process.env.DEFAULT_DUMPIO, false);
 export const DEFAULT_USER_DATA_DIR: string | undefined = process.env.DEFAULT_USER_DATA_DIR ?
   untildify(process.env.DEFAULT_USER_DATA_DIR) :
   undefined;
@@ -113,6 +123,7 @@ export const TIMEOUT_ALERT_URL: string | null = process.env.TIMEOUT_ALERT_URL ||
 export const ERROR_ALERT_URL: string | null = process.env.ERROR_ALERT_URL || null;
 
 // Health
+export const PRE_REQUEST_HEALTH_CHECK: boolean = parseJSONParam(process.env.PRE_REQUEST_HEALTH_CHECK, false);
 export const EXIT_ON_HEALTH_FAILURE: boolean = parseJSONParam(process.env.EXIT_ON_HEALTH_FAILURE, false);
 export const MAX_CPU_PERCENT: number = parseNumber(process.env.MAX_CPU_PERCENT, 99);
 export const MAX_MEMORY_PERCENT: number = parseNumber(process.env.MAX_MEMORY_PERCENT, 99);
@@ -125,6 +136,7 @@ export const METRICS_JSON_PATH: string | null = process.env.METRICS_JSON_PATH ?
 // Host and port to bind our server to
 export const HOST: string | undefined = process.env.HOST;
 export const PORT: number = parseNumber(process.env.PORT, 8080);
+export const SOCKET_CLOSE_METHOD = parseSocketBehavior(process.env.SOCKET_CLOSE_METHOD);
 
 // Host and port for /session calls to build URLs to.
 // Useful for when browserless is behind a proxy

@@ -13,7 +13,7 @@ import * as url from 'url';
 import { Features } from './features';
 import * as util from './utils';
 
-import { ResourceMonitor } from './hardware-monitoring';
+import { getMachineStats } from './hardware-monitoring';
 import { afterRequest, beforeRequest, externalRoutes } from './hooks';
 import { PuppeteerProvider } from './puppeteer-provider';
 import { Queue } from './queue';
@@ -50,7 +50,6 @@ export class BrowserlessServer {
   private config: IBrowserlessOptions;
   private stats: IBrowserlessStats[];
   private httpServer: http.Server;
-  private readonly resourceMonitor: ResourceMonitor;
   private puppeteerProvider: PuppeteerProvider;
   private webdriver: WebDriver;
   private metricsInterval: NodeJS.Timeout;
@@ -73,7 +72,6 @@ export class BrowserlessServer {
       },
     });
 
-    this.resourceMonitor = new ResourceMonitor();
     this.puppeteerProvider = new PuppeteerProvider(opts, this, this.queue);
     this.webdriver = new WebDriver(this.queue);
     this.enableAPIGet = opts.enableAPIGet;
@@ -121,7 +119,7 @@ export class BrowserlessServer {
         debug(`Calling web-hook for errors(s): ${opts.errorAlertURL}`);
         const parsed = url.parse(opts.errorAlertURL as string, true);
         parsed.query.error = message;
-        delete parsed.search;
+        parsed.search = null;
         const finalUrl = url.format(parsed);
         request(finalUrl, _.noop);
       }, thirtyMinutes, debounceOpts) :
@@ -163,7 +161,7 @@ export class BrowserlessServer {
   }
 
   public async getMetrics() {
-    const { cpu, memory } = await this.resourceMonitor.getMachineStats();
+    const { cpu, memory } = await getMachineStats();
 
     return [...this.stats, {
       ...this.currentStat,
@@ -179,8 +177,7 @@ export class BrowserlessServer {
   }
 
   public async getPressure() {
-    const { cpu, memory } = await this.resourceMonitor
-      .getMachineStats()
+    const { cpu, memory } = await getMachineStats()
       .catch((err) => {
         debug(`Error loading cpu/memory in pressure call ${err}`);
         return { cpu: null, memory: null };
@@ -328,7 +325,7 @@ export class BrowserlessServer {
       new Promise((resolve) => this.httpServer.close(resolve)),
       new Promise((resolve) => {
         this.proxy.close();
-        resolve();
+        resolve(null);
       }),
       this.puppeteerProvider.kill(),
       this.webdriver.kill(),
@@ -372,18 +369,22 @@ export class BrowserlessServer {
     { req, socket, header, message, recordStat }:
     { req: http.IncomingMessage; socket: Socket; header: string; message: string; recordStat: boolean; },
   ) {
-    debug(`${req.url}: ${message}`);
+    if (this.config.socketBehavior === 'http') {
+      debug(`${req.url}: ${message}. Behavior of "http" set, writing response and closing.`);
+      const httpResponse = util.dedent(`${header}
+        Content-Type: text/plain; charset=UTF-8
+        Content-Encoding: UTF-8
+        Accept-Ranges: bytes
+        Connection: keep-alive
 
-    const httpResponse = util.dedent(`${header}
-      Content-Type: text/plain; charset=UTF-8
-      Content-Encoding: UTF-8
-      Accept-Ranges: bytes
-      Connection: keep-alive
+        ${message}`);
 
-      ${message}`);
-
-    socket.write(httpResponse);
-    socket.end();
+      socket.write(httpResponse);
+      socket.end();
+    } else {
+      debug(`${req.url}: ${message}. Behavior of "close" set, destroying connection without response.`);
+      socket.destroy();
+    }
 
     if (recordStat) {
       this.currentStat.rejected++;
@@ -504,7 +505,7 @@ export class BrowserlessServer {
   }
 
   private async recordMetrics() {
-    const { cpu, memory } = await this.resourceMonitor.getMachineStats();
+    const { cpu, memory } = await getMachineStats();
 
     this.stats.push(Object.assign({}, {
       ...this.currentStat,
